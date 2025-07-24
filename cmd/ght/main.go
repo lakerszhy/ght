@@ -1,25 +1,13 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-
-	"github.com/lakerszhy/ght"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 func main() {
-	data, err := http.Get("https://github.com/trending/go?since=daily")
-	if err != nil {
+	p := tea.NewProgram(newApp(),
+		tea.WithAltScreen(), tea.WithMouseCellMotion())
+	if _, err := p.Run(); err != nil {
 		panic(err)
-	}
-	defer data.Body.Close()
-
-	repos, err := ght.Parse(data.Body)
-	if err != nil {
-		panic(err)
-	}
-
-	for _, r := range repos {
-		fmt.Printf("%s/%s\n", r.Owner, r.Name)
 	}
 }
