@@ -2,10 +2,12 @@ package view
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/x/ansi"
 	"github.com/lakerszhy/ght/github"
 )
 
@@ -70,10 +72,36 @@ func (p repoPanel) View() string {
 	if p.IsFocused {
 		borderColor = "#4493f8"
 	}
-	return lipgloss.NewStyle().
-		Border(lipgloss.RoundedBorder()).
+
+	return lipgloss.NewStyle().Border(p.border()).
 		BorderForeground(lipgloss.Color(borderColor)).
 		Width(p.list.Width()).Render(p.list.View())
+}
+
+func (p repoPanel) border() lipgloss.Border {
+	border := lipgloss.RoundedBorder()
+	border = p.borderTitle(border)
+	border = p.borderBottom(border)
+	return border
+}
+
+func (p repoPanel) borderTitle(border lipgloss.Border) lipgloss.Border {
+	title := fmt.Sprintf("%s%s%s", border.MiddleRight, p.dateRange.String(), border.MiddleLeft)
+	repeatCount := max(p.list.Width()-ansi.StringWidth(title)-ansi.StringWidth(border.Top), 0)
+	end := strings.Repeat(border.Top, repeatCount)
+	top := border.Top + title + end
+	border.Top = top
+	return border
+}
+
+func (p repoPanel) borderBottom(border lipgloss.Border) lipgloss.Border {
+	foot := fmt.Sprintf("%d/%d", p.list.Index()+1, len(p.list.Items()))
+	foot = fmt.Sprintf("%s%s%s", border.MiddleRight, foot, border.MiddleLeft)
+	repeatCount := max(p.list.Width()-ansi.StringWidth(foot)-ansi.StringWidth(border.Bottom), 0)
+	start := strings.Repeat(border.Bottom, repeatCount)
+	bottom := start + foot + border.Bottom
+	border.Bottom = bottom
+	return border
 }
 
 func (p repoPanel) SetSize(width int, height int) repoPanel {
