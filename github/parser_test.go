@@ -1,4 +1,4 @@
-package ght
+package github
 
 import (
 	"os"

@@ -1,4 +1,4 @@
-package main
+package view
 
 const (
 	statusInProgress = iota
@@ -8,14 +8,14 @@ const (
 
 type status int
 
-func (s status) IsInProgress() bool {
+func (s status) isInProgress() bool {
 	return s == statusInProgress
 }
 
-func (s status) IsSuccessful() bool {
+func (s status) isSuccessful() bool {
 	return s == statusSuccessful
 }
 
-func (s status) IsFailed() bool {
+func (s status) isFailed() bool {
 	return s == statusFailed
 }
