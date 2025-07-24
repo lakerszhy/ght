@@ -28,14 +28,14 @@ func newRepoPanel(dateRange github.DateRange, isFocused bool) repoPanel {
 	list.SetShowHelp(false)
 	return repoPanel{
 		dateRange: dateRange,
-		fetchMsg:  newFetchInProgress(),
+		fetchMsg:  newFetchInProgress(dateRange),
 		list:      list,
 		IsFocused: isFocused,
 	}
 }
 
 func (p repoPanel) Init() tea.Cmd {
-	return fetchCmd()
+	return fetchCmd(p.dateRange)
 }
 
 func (p repoPanel) Update(msg tea.Msg) (repoPanel, tea.Cmd) {
@@ -43,6 +43,9 @@ func (p repoPanel) Update(msg tea.Msg) (repoPanel, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case fetchMsg:
+		if msg.DateRange != p.dateRange {
+			return p, nil
+		}
 		p.fetchMsg = msg
 		if p.fetchMsg.isSuccessful() {
 			repos := p.fetchMsg.Repos
@@ -86,7 +89,7 @@ func (p repoPanel) border() lipgloss.Border {
 }
 
 func (p repoPanel) borderTitle(border lipgloss.Border) lipgloss.Border {
-	title := fmt.Sprintf("%s%s%s", border.MiddleRight, p.dateRange.String(), border.MiddleLeft)
+	title := fmt.Sprintf("%s %s %s", border.MiddleRight, p.dateRange.Name, border.MiddleLeft)
 	repeatCount := max(p.list.Width()-ansi.StringWidth(title)-ansi.StringWidth(border.Top), 0)
 	end := strings.Repeat(border.Top, repeatCount)
 	top := border.Top + title + end

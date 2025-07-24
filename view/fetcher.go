@@ -1,40 +1,41 @@
 package view
 
 import (
-	"os"
+	"fmt"
+	"net/http"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/lakerszhy/ght/github"
 )
 
-func fetchCmd() tea.Cmd {
+func fetchCmd(dateRange github.DateRange) tea.Cmd {
 	var cmds []tea.Cmd
 
 	cmd := func() tea.Msg {
-		return newFetchInProgress()
+		return newFetchInProgress(dateRange)
 	}
 	cmds = append(cmds, cmd)
 
 	cmd = func() tea.Msg {
-		// data, err := http.Get("https://github.com/trending/go?since=daily")
+		url := fmt.Sprintf("https://github.com/trending/go?since=%s", dateRange.Code)
+		data, err := http.Get(url)
+		if err != nil {
+			return newFetchFailed(dateRange, err)
+		}
+		defer data.Body.Close()
+
+		// f, err := os.Open("github/testdata/go_daily.html")
 		// if err != nil {
 		// 	return newFetchFailed(err)
 		// }
-		// defer data.Body.Close()
+		// defer f.Close()
 
-		// TODO: mock
-		f, err := os.Open("github/testdata/go_daily.html")
+		repos, err := github.Parse(data.Body)
 		if err != nil {
-			return newFetchFailed(err)
-		}
-		defer f.Close()
-
-		repos, err := github.Parse(f)
-		if err != nil {
-			return newFetchFailed(err)
+			return newFetchFailed(dateRange, err)
 		}
 
-		return newFetchSuccessful(repos)
+		return newFetchSuccessful(dateRange, repos)
 	}
 	cmds = append(cmds, cmd)
 
@@ -42,27 +43,31 @@ func fetchCmd() tea.Cmd {
 }
 
 type fetchMsg struct {
-	Repos []github.Repo
-	Err   error
+	DateRange github.DateRange
+	Repos     []github.Repo
+	Err       error
 	status
 }
 
-func newFetchInProgress() fetchMsg {
+func newFetchInProgress(dateRange github.DateRange) fetchMsg {
 	return fetchMsg{
-		status: statusInProgress,
+		DateRange: dateRange,
+		status:    statusInProgress,
 	}
 }
 
-func newFetchSuccessful(repos []github.Repo) fetchMsg {
+func newFetchSuccessful(dateRange github.DateRange, repos []github.Repo) fetchMsg {
 	return fetchMsg{
-		Repos:  repos,
-		status: statusSuccessful,
+		DateRange: dateRange,
+		Repos:     repos,
+		status:    statusSuccessful,
 	}
 }
 
-func newFetchFailed(err error) fetchMsg {
+func newFetchFailed(dateRange github.DateRange, err error) fetchMsg {
 	return fetchMsg{
-		Err:    err,
-		status: statusFailed,
+		DateRange: dateRange,
+		Err:       err,
+		status:    statusFailed,
 	}
 }

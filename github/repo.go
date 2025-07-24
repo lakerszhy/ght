@@ -1,24 +1,14 @@
 package github
 
-const (
-	DateRangeDaily   DateRange = "daily"
-	DateRangeWeekly  DateRange = "weekly"
-	DateRangeMonthly DateRange = "monthly"
+var (
+	DateRangeDaily   = DateRange{Code: "daily", Name: "Today"}
+	DateRangeWeekly  = DateRange{Code: "weekly", Name: "This week"}
+	DateRangeMonthly = DateRange{Code: "monthly", Name: "This month"}
 )
 
-type DateRange string
-
-func (d DateRange) String() string {
-	switch d {
-	case DateRangeDaily:
-		return "Today"
-	case DateRangeWeekly:
-		return "This week"
-	case DateRangeMonthly:
-		return "This month"
-	default:
-		return ""
-	}
+type DateRange struct {
+	Code string
+	Name string
 }
 
 type Repo struct {
