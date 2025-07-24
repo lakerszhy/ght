@@ -6,14 +6,17 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/lakerszhy/ght/github"
 )
 
 type repoPanel struct {
-	fetchMsg fetchMsg
-	list     list.Model
+	dateRange github.DateRange
+	fetchMsg  fetchMsg
+	list      list.Model
+	IsFocused bool
 }
 
-func newRepoPanel() repoPanel {
+func newRepoPanel(dateRange github.DateRange, isFocused bool) repoPanel {
 	list := list.New([]list.Item{}, NewRepoDelegate(), 0, 0)
 	list.DisableQuitKeybindings()
 	list.SetShowTitle(false)
@@ -22,8 +25,10 @@ func newRepoPanel() repoPanel {
 	list.SetShowStatusBar(false)
 	list.SetShowHelp(false)
 	return repoPanel{
-		fetchMsg: newFetchInProgress(),
-		list:     list,
+		dateRange: dateRange,
+		fetchMsg:  newFetchInProgress(),
+		list:      list,
+		IsFocused: isFocused,
 	}
 }
 
@@ -61,9 +66,13 @@ func (p repoPanel) View() string {
 		return fmt.Sprintf("Failed: %s", p.fetchMsg.Err)
 	}
 
+	borderColor := "#3d444d"
+	if p.IsFocused {
+		borderColor = "#4493f8"
+	}
 	return lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#3d444d")).
+		BorderForeground(lipgloss.Color(borderColor)).
 		Width(p.list.Width()).Render(p.list.View())
 }
 

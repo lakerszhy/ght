@@ -3,18 +3,21 @@ package view
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/lakerszhy/ght/github"
 )
 
 type app struct {
 	panels []repoPanel
+	focus  github.DateRange
 }
 
 func NewApp() tea.Model {
 	return app{
+		focus: github.DateRangeDaily,
 		panels: []repoPanel{
-			newRepoPanel(),
-			newRepoPanel(),
-			newRepoPanel(),
+			newRepoPanel(github.DateRangeDaily, true),
+			newRepoPanel(github.DateRangeWeekly, false),
+			newRepoPanel(github.DateRangeMonthly, false),
 		},
 	}
 }
@@ -50,11 +53,27 @@ func (a app) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if msg.String() == "ctrl+c" {
 			return a, tea.Quit
 		}
+		if msg.String() == "tab" {
+			switch a.focus {
+			case github.DateRangeDaily:
+				a.focus = github.DateRangeWeekly
+			case github.DateRangeWeekly:
+				a.focus = github.DateRangeMonthly
+			case github.DateRangeMonthly:
+				a.focus = github.DateRangeDaily
+			}
+			for i := range a.panels {
+				a.panels[i].IsFocused = a.panels[i].dateRange == a.focus
+			}
+			return a, nil
+		}
 	}
 
 	for i := range a.panels {
 		var cmd tea.Cmd
-		a.panels[i], cmd = a.panels[i].Update(msg)
+		if a.panels[i].IsFocused {
+			a.panels[i], cmd = a.panels[i].Update(msg)
+		}
 		cmds = append(cmds, cmd)
 	}
 	return a, tea.Batch(cmds...)
