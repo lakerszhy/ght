@@ -5,6 +5,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type repoPanel struct {
@@ -15,6 +16,11 @@ type repoPanel struct {
 func newRepoPanel() repoPanel {
 	list := list.New([]list.Item{}, NewRepoDelegate(), 0, 0)
 	list.DisableQuitKeybindings()
+	list.SetShowTitle(false)
+	list.SetFilteringEnabled(false)
+	list.SetShowPagination(false)
+	list.SetShowStatusBar(false)
+	list.SetShowHelp(false)
 	return repoPanel{
 		fetchMsg: newFetchInProgress(),
 		list:     list,
@@ -55,10 +61,13 @@ func (p repoPanel) View() string {
 		return fmt.Sprintf("Failed: %s", p.fetchMsg.Err)
 	}
 
-	return p.list.View()
+	return lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color("#3d444d")).
+		Width(p.list.Width()).Render(p.list.View())
 }
 
 func (p repoPanel) SetSize(width int, height int) repoPanel {
-	p.list.SetSize(width, height)
+	p.list.SetSize(width-2, height-2)
 	return p
 }
