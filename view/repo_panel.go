@@ -63,22 +63,24 @@ func (p repoPanel) Update(msg tea.Msg) (repoPanel, tea.Cmd) {
 }
 
 func (p repoPanel) View() string {
-	if p.fetchMsg.isInProgress() {
-		return "Fetching..."
-	}
-
-	if p.fetchMsg.isFailed() {
-		return fmt.Sprintf("Failed: %s", p.fetchMsg.Err)
-	}
-
 	borderColor := "#3d444d"
 	if p.IsFocused {
 		borderColor = "#4493f8"
 	}
-
-	return lipgloss.NewStyle().Border(p.border()).
+	style := lipgloss.NewStyle().Border(p.border()).
 		BorderForeground(lipgloss.Color(borderColor)).
-		Width(p.list.Width()).Render(p.list.View())
+		Width(p.list.Width()).Height(p.list.Height())
+
+	if p.fetchMsg.isInProgress() {
+		return style.AlignHorizontal(lipgloss.Center).Render("Fetching...")
+	}
+
+	if p.fetchMsg.isFailed() {
+		return style.AlignHorizontal(lipgloss.Center).
+			Render(fmt.Sprintf("Failed: %s", p.fetchMsg.Err))
+	}
+
+	return style.Render(p.list.View())
 }
 
 func (p repoPanel) border() lipgloss.Border {
@@ -98,6 +100,10 @@ func (p repoPanel) borderTitle(border lipgloss.Border) lipgloss.Border {
 }
 
 func (p repoPanel) borderBottom(border lipgloss.Border) lipgloss.Border {
+	if len(p.list.Items()) == 0 {
+		return border
+	}
+
 	foot := fmt.Sprintf("%d/%d", p.list.Index()+1, len(p.list.Items()))
 	foot = fmt.Sprintf("%s%s%s", border.MiddleRight, foot, border.MiddleLeft)
 	repeatCount := max(p.list.Width()-ansi.StringWidth(foot)-ansi.StringWidth(border.Bottom), 0)

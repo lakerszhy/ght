@@ -26,7 +26,7 @@ func fetchCmd(dateRange github.DateRange) tea.Cmd {
 
 		// f, err := os.Open("github/testdata/go_daily.html")
 		// if err != nil {
-		// 	return newFetchFailed(err)
+		// 	return newFetchFailed(dateRange, err)
 		// }
 		// defer f.Close()
 
