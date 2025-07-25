@@ -13,7 +13,7 @@
   - This month
 - Filter repositories by programming language
 
-## Installation
+## Installation && Update
 
 ### Linux && macOS
 
@@ -42,7 +42,10 @@ ght -l go
 ## Keyboard Controls
 
 - `Tab`: Switch between time periods (Today, This week, This month)
-- `↑/↓`: Navigate through repositories
+- `↑/k`: Move up
+- `↓/j`: Move down
+- `left/h/pgup/pgdn/b/u`: Previous page
+- `right/l/pgdn/pgup/f/d`: Next page
 - `Enter` or `o`: Open the selected repository in your browser
 - `Ctrl+C`: Quit the application
 
