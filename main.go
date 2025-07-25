@@ -9,6 +9,8 @@ import (
 	"github.com/lakerszhy/ght/view"
 )
 
+var version = "dev"
+
 func main() {
 	if err := run(); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
@@ -21,7 +23,7 @@ func run() error {
 	flag.StringVar(&language, "l", "", "filter repos by language")
 	flag.Parse()
 
-	p := tea.NewProgram(view.NewApp(language),
+	p := tea.NewProgram(view.NewApp(language, version),
 		tea.WithAltScreen(),
 		tea.WithMouseCellMotion(),
 	)

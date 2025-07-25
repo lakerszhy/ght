@@ -1,6 +1,8 @@
 package view
 
 import (
+	"fmt"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/lakerszhy/ght/github"
@@ -10,12 +12,14 @@ type app struct {
 	panels   []repoPanel
 	focus    github.DateRange
 	language string
+	version  string
 }
 
-func NewApp(language string) tea.Model {
+func NewApp(language string, version string) tea.Model {
 	return app{
 		focus:    github.DateRangeDaily,
 		language: language,
+		version:  version,
 		panels: []repoPanel{
 			newRepoPanel(github.DateRangeDaily, true),
 			newRepoPanel(github.DateRangeWeekly, false),
@@ -26,6 +30,10 @@ func NewApp(language string) tea.Model {
 
 func (a app) Init() tea.Cmd {
 	var cmds []tea.Cmd
+
+	cmd := tea.SetWindowTitle(fmt.Sprintf("ght - %s", a.version))
+	cmds = append(cmds, cmd)
+
 	for _, panel := range a.panels {
 		cmds = append(cmds, panel.Init(a.language))
 	}
