@@ -13,18 +13,16 @@
 
 ## Installation
 
-### Using Go
+### Linux && macOS
 
-```bash
-go install github.com/lakerszhy/ght@latest
+```sh
+curl -fsSL https://raw.githubusercontent.com/lakerszhy/ght/main/install.sh | sh
 ```
 
-### From Source
+### Windows
 
-```bash
-git clone https://github.com/lakerszhy/ght.git
-cd ght
-go build
+```powershell
+irm https://raw.githubusercontent.com/lakerszhy/ght/main/install.ps1 | iex
 ```
 
 ## Usage
@@ -48,11 +46,7 @@ ght -l go
 
 ## Dependencies
 
-- [Bubble Tea](https://github.com/charmbracelet/bubbletea): Terminal UI framework
-- [Bubbles](https://github.com/charmbracelet/bubbles): UI components for Bubble Tea
-- [Lip Gloss](https://github.com/charmbracelet/lipgloss): Style definitions for terminal applications
-- [goquery](https://github.com/PuerkitoBio/goquery): HTML parsing library
-
-## License
-
-MIT
+- [Bubble Tea](https://github.com/charmbracelet/bubbletea)
+- [Bubbles](https://github.com/charmbracelet/bubbles)
+- [Lip Gloss](https://github.com/charmbracelet/lipgloss)
+- [goquery](https://github.com/PuerkitoBio/goquery)
