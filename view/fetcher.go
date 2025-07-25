@@ -19,51 +19,55 @@ func fetchCmd(language string, dateRange github.DateRange) tea.Cmd {
 	cmds = append(cmds, cmd)
 
 	cmd = func() tea.Msg {
-		u, err := url.Parse("https://github.com/trending")
-		if err != nil {
-			return newFetchFailed(dateRange, err)
-		}
-
-		if language != "" {
-			u = u.JoinPath(language)
-		}
-
-		params := url.Values{}
-		params.Set("since", dateRange.Code)
-
-		u.RawQuery = params.Encode()
-
-		client := &http.Client{}
-
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-
-		req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
-		if err != nil {
-			return newFetchFailed(dateRange, err)
-		}
-		data, err := client.Do(req)
-		if err != nil {
-			return newFetchFailed(dateRange, err)
-		}
-		defer data.Body.Close()
-
-		// f, err := os.Open("github/testdata/go_daily.html")
-		// if err != nil {
-		// 	return newFetchFailed(dateRange, err)
-		// }
-		// defer f.Close()
-
-		repos, err := github.Parse(data.Body)
-		if err != nil {
-			return newFetchFailed(dateRange, err)
-		}
-
-		return newFetchSuccessful(dateRange, repos)
+		return doFetch(language, dateRange)
 	}
 	cmds = append(cmds, cmd)
 
 	return tea.Sequence(cmds...)
+}
+
+func doFetch(language string, dateRange github.DateRange) fetchMsg {
+	u, err := url.Parse("https://github.com/trending")
+	if err != nil {
+		return newFetchFailed(dateRange, err)
+	}
+
+	if language != "" {
+		u = u.JoinPath(language)
+	}
+
+	params := url.Values{}
+	params.Set("since", dateRange.Code)
+
+	u.RawQuery = params.Encode()
+
+	client := &http.Client{}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
+	if err != nil {
+		return newFetchFailed(dateRange, err)
+	}
+	data, err := client.Do(req)
+	if err != nil {
+		return newFetchFailed(dateRange, err)
+	}
+	defer data.Body.Close()
+
+	// f, err := os.Open("github/testdata/go_daily.html")
+	// if err != nil {
+	// 	return newFetchFailed(dateRange, err)
+	// }
+	// defer f.Close()
+
+	repos, err := github.Parse(data.Body)
+	if err != nil {
+		return newFetchFailed(dateRange, err)
+	}
+
+	return newFetchSuccessful(dateRange, repos)
 }
 
 type fetchMsg struct {
