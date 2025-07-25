@@ -19,12 +19,12 @@ func Parse(r io.Reader) ([]Repo, error) {
 		// Find owner and name
 		href := s.Find("h2 a").AttrOr("href", "")
 		parts := strings.Split(href, "/")
-		if len(parts) != 3 {
+		if len(parts) != 3 { //nolint: mnd // href format: /owner/name
 			return
 		}
 
 		// Find description
-		description := s.Children().Get(2).FirstChild.Data
+		description := s.Children().Get(2).FirstChild.Data //nolint: mnd // description is the 3rd child
 		description = strings.TrimSpace(description)
 
 		// Find language color

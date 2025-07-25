@@ -33,11 +33,13 @@ func (d repoDelegate) Render(w io.Writer, m list.Model, index int, item list.Ite
 		return
 	}
 
-	title := ansi.Truncate(d.title(i), m.Width()-3, "...")
-	desc := ansi.Truncate(d.description(i), m.Width()-3, "...")
-	info := ansi.Truncate(d.info(i), m.Width()-3, "...")
+	width := m.Width() - 3 //nolint: mnd // left 2 + right 1
 
-	style := lipgloss.NewStyle().Padding(0, 1, 0, 2)
+	title := ansi.Truncate(d.title(i), width, "...")
+	desc := ansi.Truncate(d.description(i), width, "...")
+	info := ansi.Truncate(d.info(i), width, "...")
+
+	style := lipgloss.NewStyle().Padding(0, 1, 0, 2) //nolint: mnd // right 2
 	if m.Index() == index {
 		style = style.Border(lipgloss.RoundedBorder(),
 			false, false, false, true).
@@ -81,7 +83,7 @@ func (d repoDelegate) info(item repoItem) string {
 }
 
 func (d repoDelegate) Height() int {
-	return 3
+	return 3 //nolint: mnd // repo item height
 }
 
 func (d repoDelegate) Spacing() int {

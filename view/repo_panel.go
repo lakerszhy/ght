@@ -60,7 +60,7 @@ func (p repoPanel) Update(msg tea.Msg) (repoPanel, tea.Cmd) {
 	case tea.KeyMsg:
 		if msg.String() == "o" || msg.String() == "enter" {
 			if i, ok := p.list.SelectedItem().(repoItem); ok {
-				browser.OpenURL(i.URL())
+				_ = browser.OpenURL(i.URL())
 			}
 			return p, nil
 		}
@@ -122,6 +122,6 @@ func (p repoPanel) borderBottom(border lipgloss.Border) lipgloss.Border {
 }
 
 func (p repoPanel) SetSize(width int, height int) repoPanel {
-	p.list.SetSize(width-2, height-2)
+	p.list.SetSize(width-2, height-2) //nolint: mnd // border width
 	return p
 }

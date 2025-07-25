@@ -43,7 +43,7 @@ func doFetch(language string, dateRange github.DateRange) fetchMsg {
 
 	client := &http.Client{}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second) //nolint: mnd // request timeout
 	defer cancel()
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
