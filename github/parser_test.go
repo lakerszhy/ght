@@ -5,15 +5,16 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestParser(t *testing.T) {
 	f, err := os.Open("testdata/go_daily.html")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer f.Close()
 
 	repos, err := Parse(f)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotEmpty(t, repos)
 
 	for _, r := range repos {

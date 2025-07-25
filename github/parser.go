@@ -15,7 +15,7 @@ func Parse(r io.Reader) ([]Repo, error) {
 
 	var repos []Repo
 
-	doc.Find("main article").Each(func(i int, s *goquery.Selection) {
+	doc.Find("main article").Each(func(_ int, s *goquery.Selection) {
 		// Find owner and name
 		href := s.Find("h2 a").AttrOr("href", "")
 		parts := strings.Split(href, "/")
