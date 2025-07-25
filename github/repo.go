@@ -1,5 +1,7 @@
 package github
 
+import "fmt"
+
 var (
 	DateRangeDaily   = DateRange{Code: "daily", Name: "Today"}
 	DateRangeWeekly  = DateRange{Code: "weekly", Name: "This week"}
@@ -20,4 +22,8 @@ type Repo struct {
 	StarsTotal    string
 	Forks         string
 	StarsSince    string
+}
+
+func (r Repo) URL() string {
+	return fmt.Sprintf("https://github.com/%s/%s", r.Owner, r.Name)
 }

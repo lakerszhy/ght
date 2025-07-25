@@ -9,6 +9,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/x/ansi"
 	"github.com/lakerszhy/ght/github"
+	"github.com/pkg/browser"
 )
 
 type repoPanel struct {
@@ -56,6 +57,13 @@ func (p repoPanel) Update(msg tea.Msg) (repoPanel, tea.Cmd) {
 			cmd = p.list.SetItems(items)
 		}
 		return p, cmd
+	case tea.KeyMsg:
+		if msg.String() == "o" || msg.String() == "enter" {
+			if i, ok := p.list.SelectedItem().(repoItem); ok {
+				browser.OpenURL(i.URL())
+			}
+			return p, nil
+		}
 	}
 
 	p.list, cmd = p.list.Update(msg)
