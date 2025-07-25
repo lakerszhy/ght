@@ -17,7 +17,7 @@ func fetchCmd(dateRange github.DateRange) tea.Cmd {
 	cmds = append(cmds, cmd)
 
 	cmd = func() tea.Msg {
-		url := fmt.Sprintf("https://github.com/trending/go?since=%s", dateRange.Code)
+		url := fmt.Sprintf("https://github.com/trending/?since=%s", dateRange.Code)
 		data, err := http.Get(url)
 		if err != nil {
 			return newFetchFailed(dateRange, err)

@@ -3,6 +3,7 @@ package view
 import (
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
@@ -32,13 +33,9 @@ func (d repoDelegate) Render(w io.Writer, m list.Model, index int, item list.Ite
 		return
 	}
 
-	title := d.title(i)
-	title = ansi.Truncate(title, m.Width()-3, "...")
-
-	desc := d.description(i)
-	desc = ansi.Truncate(desc, m.Width()-3, "...")
-
-	info := d.info(i)
+	title := ansi.Truncate(d.title(i), m.Width()-3, "...")
+	desc := ansi.Truncate(d.description(i), m.Width()-3, "...")
+	info := ansi.Truncate(d.info(i), m.Width()-3, "...")
 
 	style := lipgloss.NewStyle().Padding(0, 1, 0, 2)
 	if m.Index() == index {
@@ -69,11 +66,18 @@ func (d repoDelegate) description(item repoItem) string {
 func (d repoDelegate) info(item repoItem) string {
 	style := lipgloss.NewStyle().Foreground(lipgloss.Color("#9198a1"))
 
-	language := style.Render(item.Language)
-	stars := style.Render(item.StarsTotal)
-	forks := style.Render(item.Forks)
+	infos := []string{}
 
-	return fmt.Sprintf("%s %s %s", language, stars, forks)
+	if item.Language != "" {
+		dot := lipgloss.NewStyle().Foreground(lipgloss.Color(item.LanguageColor)).Render("●")
+		language := style.Render(item.Language)
+		infos = append(infos, fmt.Sprintf("%s %s", dot, language))
+	}
+
+	infos = append(infos, fmt.Sprintf("⭑ %s", item.StarsTotal))
+	infos = append(infos, fmt.Sprintf("🝘 %s", item.Forks))
+
+	return strings.Join(infos, "   ")
 }
 
 func (d repoDelegate) Height() int {

@@ -12,11 +12,12 @@ type DateRange struct {
 }
 
 type Repo struct {
-	Owner       string
-	Name        string
-	Description string
-	Language    string
-	StarsTotal  string
-	Forks       string
-	StarsSince  string
+	Owner         string
+	Name          string
+	Description   string
+	Language      string
+	LanguageColor string
+	StarsTotal    string
+	Forks         string
+	StarsSince    string
 }

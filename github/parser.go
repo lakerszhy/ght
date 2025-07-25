@@ -27,6 +27,11 @@ func Parse(r io.Reader) ([]Repo, error) {
 		description := s.Children().Get(2).FirstChild.Data
 		description = strings.TrimSpace(description)
 
+		// Find language color
+		languageColor := s.Find("span.repo-language-color").AttrOr("style", "")
+		languageColor = strings.TrimPrefix(languageColor, "background-color:")
+		languageColor = strings.TrimSpace(languageColor)
+
 		// Find language
 		language := s.Find(".d-inline-block span[itemprop='programmingLanguage']").Text()
 
@@ -43,13 +48,14 @@ func Parse(r io.Reader) ([]Repo, error) {
 		starsSince = strings.TrimSpace(starsSince)
 
 		repos = append(repos, Repo{
-			Owner:       parts[1],
-			Name:        parts[2],
-			Description: description,
-			Language:    language,
-			StarsTotal:  starsTotal,
-			Forks:       forks,
-			StarsSince:  starsSince,
+			Owner:         parts[1],
+			Name:          parts[2],
+			Description:   description,
+			Language:      language,
+			LanguageColor: languageColor,
+			StarsTotal:    starsTotal,
+			Forks:         forks,
+			StarsSince:    starsSince,
 		})
 	})
 
