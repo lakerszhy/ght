@@ -7,13 +7,15 @@ import (
 )
 
 type app struct {
-	panels []repoPanel
-	focus  github.DateRange
+	panels   []repoPanel
+	focus    github.DateRange
+	language string
 }
 
-func NewApp() tea.Model {
+func NewApp(language string) tea.Model {
 	return app{
-		focus: github.DateRangeDaily,
+		focus:    github.DateRangeDaily,
+		language: language,
 		panels: []repoPanel{
 			newRepoPanel(github.DateRangeDaily, true),
 			newRepoPanel(github.DateRangeWeekly, false),
@@ -25,7 +27,7 @@ func NewApp() tea.Model {
 func (a app) Init() tea.Cmd {
 	var cmds []tea.Cmd
 	for _, panel := range a.panels {
-		cmds = append(cmds, panel.Init())
+		cmds = append(cmds, panel.Init(a.language))
 	}
 	return tea.Batch(cmds...)
 }

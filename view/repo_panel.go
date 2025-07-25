@@ -35,8 +35,8 @@ func newRepoPanel(dateRange github.DateRange, isFocused bool) repoPanel {
 	}
 }
 
-func (p repoPanel) Init() tea.Cmd {
-	return fetchCmd(p.dateRange)
+func (p repoPanel) Init(language string) tea.Cmd {
+	return fetchCmd(language, p.dateRange)
 }
 
 func (p repoPanel) Update(msg tea.Msg) (repoPanel, tea.Cmd) {

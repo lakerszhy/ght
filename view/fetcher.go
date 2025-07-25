@@ -1,14 +1,14 @@
 package view
 
 import (
-	"fmt"
 	"net/http"
+	"net/url"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/lakerszhy/ght/github"
 )
 
-func fetchCmd(dateRange github.DateRange) tea.Cmd {
+func fetchCmd(language string, dateRange github.DateRange) tea.Cmd {
 	var cmds []tea.Cmd
 
 	cmd := func() tea.Msg {
@@ -17,8 +17,21 @@ func fetchCmd(dateRange github.DateRange) tea.Cmd {
 	cmds = append(cmds, cmd)
 
 	cmd = func() tea.Msg {
-		url := fmt.Sprintf("https://github.com/trending/?since=%s", dateRange.Code)
-		data, err := http.Get(url)
+		u, err := url.Parse("https://github.com/trending")
+		if err != nil {
+			return newFetchFailed(dateRange, err)
+		}
+
+		if language != "" {
+			u = u.JoinPath(language)
+		}
+
+		params := url.Values{}
+		params.Set("since", dateRange.Code)
+
+		u.RawQuery = params.Encode()
+
+		data, err := http.Get(u.String())
 		if err != nil {
 			return newFetchFailed(dateRange, err)
 		}
