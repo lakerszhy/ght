@@ -1,5 +1,7 @@
 # GHT - GitHub Trending TUI
 
+![ght](/asset/ght.png)
+
 `GHT` is a terminal-based user interface (TUI) for browsing GitHub trending repositories. It allows you to view trending repositories by different time periods (daily, weekly, monthly) and filter by programming language.
 
 ## Features
