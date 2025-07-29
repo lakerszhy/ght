@@ -43,13 +43,18 @@ func doFetch(language string, dateRange github.DateRange) fetchMsg {
 
 	client := &http.Client{}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second) //nolint: mnd // request timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second) //nolint: mnd // request timeout
 	defer cancel()
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
 		return newFetchFailed(dateRange, err)
 	}
+	req.Header.Set(
+		"User-Agent",
+		"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+	)
+
 	data, err := client.Do(req)
 	if err != nil {
 		return newFetchFailed(dateRange, err)
